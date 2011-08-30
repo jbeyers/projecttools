@@ -10,35 +10,37 @@ try:
 except:
     pass
 
+def _with_deploy_env(commands=[]):
+    """
+    Run a set of commands as the deploy user in the deploy directory.
+    """
+    with cd(env.directory):
+        for command in commands:
+            sudo(command, user=env.deploy_user)
+
 def pull():
     """
     Do a git pull.
     """
-    with cd(env.directory):
-        sudo('git pull', user=env.deploy_user)
+    _with_deploy_env(['git pull'])
 
 def stop():
     """
     Shutdown the instance and zeo.
     """
-    with cd(env.directory):
-        sudo('./bin/instance stop', user=env.deploy_user)
-        sudo('./bin/zeoserver stop', user=env.deploy_user)
+    _with_deploy_env(['./bin/instance stop', './bin/zeoserver stop'])
         
 def start():
     """
     Start up the instance and zeo.
     """
-    with cd(env.directory):
-        sudo('./bin/zeoserver start', user=env.deploy_user)
-        sudo('./bin/instance start', user=env.deploy_user)
+    _with_deploy_env(['./bin/zeoserver start', './bin/instance start'])
 
 def restart():
     """
     Restart just the zope instance, not the zeo.
     """
-    with cd(env.directory):
-        sudo('./bin/instance restart', user=env.deploy_user)
+    _with_deploy_env(['./bin/instance restart'])
 
 def status():
     """
@@ -46,16 +48,13 @@ def status():
     """
 
     # General health of the server.
+    run('cat /proc/loadavg')
     run('uptime')
-    # On an 80-column terminal, uptime cuts off the load averages, so get them.
     run('free')
     run('df -h')
 
     # Deploy and running status
-    with cd(env.directory):
-        sudo('./bin/instance status', user=env.deploy_user)
-        sudo('git status', user=env.deploy_user)
-        sudo('git log -1', user=env.deploy_user)
+    _with_deploy_env(['./bin/instance status', 'git status', 'git log -1'])
     
 def update():
     """
@@ -68,9 +67,7 @@ def buildout():
     """
     Rerun buildout.
     """
-    with cd(env.directory):
-        sudo('./bin/buildout -Nvc %s.cfg' % env.buildout_config,
-             user=env.deploy_user)
+    _with_deploy_env(['./bin/buildout -Nvc %s.cfg' % env.buildout_config])
 
 def extra():
     """
