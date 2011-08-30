@@ -1,15 +1,37 @@
-Using Fabric for consistent deployment
+Plone meeting 7 Aug 2011
+------------------------
 
-Scenario:
-    * 2 developers have access
-    * Separate Plone user with homedir
-    * Separate dev, qa, production builds
-    * Project in GIT
-    * Project already running
+A quick rundown of Fabric, a python tool for simple deploys.
+
+This is not pretty. So sue me.
+
+All code: https://github.com/jbeyers/projecttools
+
+    * This includes the presentation in rst format
+    * rst2pdf presentation.rst -b1 -s presentation.style 
+    * See http://lateral.netmanagers.com.ar/stories/BBS52.html
+
+Scenario
+--------
+
+Assumptions:
+
+    * Developers have ssh access and sudo rights under their own name.
+    * Separate plone user with homedir.
+    * Separate configurations:
+        * dev.cfg
+        * qa.cfg
+        * production.cfg
+    * Project in Git
+    * Projects already built and running.
     * QA only started up as needed.
 
-Buildout:
-Newest version: Interactive prompt better
+Buildout
+--------
+
+Newest version: Interactive prompt is available
+===============================================
+
 fabric.cfg or add to dev.cfg::
 
     [buildout]
@@ -19,9 +41,11 @@ fabric.cfg or add to dev.cfg::
     [fabric]
     recipe= zc.recipe.egg
 
-Fabric basics:
+Command-line usage
+------------------
 
 ./bin/fab [commands]
+
     * Paramiko for ssh
     * Looks for fabfile.py
     * Normal python script with functions
@@ -29,7 +53,8 @@ Fabric basics:
     * Commands can be chained (./bin/fab qa stop pull buildout start)
     * env dictionary (More about that in a minute)
 
-Typical outputs:
+Command-line usage
+------------------
 
 ./bin/fab -l::
 
@@ -48,6 +73,9 @@ Typical outputs:
         stop        Shutdown the instance and zeo.
         update      Update code on the server and restart zope.
 
+
+Command-line usage
+------------------
 
 ./bin/fab qa update::
 
@@ -75,18 +103,14 @@ Typical outputs:
     Done.
     Disconnecting from gogo.clouditto.com... done.
 
-env dictionary:
-    * Global
-    * Like bash environment variables
-    * Add anything
-    * hosts is special (but not for now)
+Basic imports
+-------------
 
-Basic imports:
-    * with cd, local, run, sudo
-    * Try to import fab_config
-    * fab_config.py used for site-specific settings in env
+.. code-block:: python
 
-What it looks like::
+    """
+    Fabric script for deploying Plone consistently.
+    """
 
     from __future__ import with_statement
     from fabric.api import env, cd, sudo, run
@@ -96,8 +120,18 @@ What it looks like::
     except:
         pass
 
-Typical fab_config.py::
-    
+Note:
+=====
+
+    * with cd, local, run, sudo
+    * Try to import fab_config
+    * fab_config.py used for site-specific settings in env
+
+Typical fab_config.py
+---------------------
+
+.. code-block:: python
+
     from fabric.api import env
 
     def qa():
@@ -109,7 +143,19 @@ Typical fab_config.py::
         env.deploy_user = 'plone'
         env.directory = '/home/%s/instances/qa.mysite' % env.deploy_user
 
-Stop and start::
+env dictionary
+==============
+
+    * Global
+    * Like bash environment variables
+    * Add anything
+    * hosts is special (but not for now)
+
+Stop and start
+--------------
+
+.. code-block:: python
+
     def stop():
         """
         Shutdown the instance and zeo.
@@ -126,7 +172,15 @@ Stop and start::
             sudo('./bin/zeoserver start', user=env.deploy_user)
             sudo('./bin/instance start', user=env.deploy_user)
 
-Git pull and restart::
+Note:
+
+    * with cd changes into a directory for the in-scope commands
+    * sudo either to root (no user specified) or the given user.
+
+Git pull and restart
+--------------------
+
+.. code-block:: python
 
     def pull():
         """
@@ -143,6 +197,11 @@ Git pull and restart::
         with cd(env.directory):
             sudo('./bin/instance restart', user=env.deploy_user)
 
+Git pull and restart combined
+-----------------------------
+
+.. code-block:: python
+
     def update():
         """
         Update code on the server and restart zope.
@@ -150,7 +209,10 @@ Git pull and restart::
         pull()
         restart()
 
-Server health and status::
+Server health and status
+------------------------
+
+.. code-block:: python
 
     def status():
         """
@@ -168,7 +230,12 @@ Server health and status::
             sudo('git status', user=env.deploy_user)
             sudo('git log -1', user=env.deploy_user)
         
-Do a buildout with correct config file::
+The rest
+---------
+
+Do a buildout with correct config file:
+
+.. code-block:: python
 
     def buildout():
         """
@@ -178,11 +245,27 @@ Do a buildout with correct config file::
             sudo('./bin/buildout -Nvc %s.cfg' % env.buildout_config,
                  user=env.deploy_user)
 
-Useful bit of scaffolding::
+Useful bit of scaffolding:
+
+.. code-block:: python
 
     def extra():
         """
-        Should normally just contain 'pass'. Useful for testing individual commands before integrating them into another function.
+        Should normally just contain 'pass'. Useful for testing individual
+        commands before integrating them into another function.
         """
         pass
 
+Future
+------
+
+Some future enhancements:
+    * get and put files from/to the server. How about:
+        * Timestamped versions of Data.fs automatically zipped
+        * Copied to the dev instance
+    * Do the initial buildout too
+    * Or make sure all the needed packages are installed
+    * Refactor methods for deploy user:
+        * All are with cd (env.directory)
+        * All are as the deploy user.
+        * Single method that takes a list of command strings.
