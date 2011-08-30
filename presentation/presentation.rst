@@ -2,14 +2,13 @@ Plone meeting 7 Aug 2011
 ------------------------
 
 A quick rundown of Fabric, a python tool for simple deploys.
+============================================================
 
-This is not pretty. So sue me.
-
-All code: https://github.com/jbeyers/projecttools
-
-    * This includes the presentation in rst format
-    * rst2pdf presentation.rst -b1 -s presentation.style 
-    * See http://lateral.netmanagers.com.ar/stories/BBS52.html
+    * This is not pretty. So sue me.
+    * All code: https://github.com/jbeyers/projecttools
+        * This includes the presentation in rst format
+        * Generate pdf: rst2pdf presentation.rst -b1 -s presentation.style 
+        * See http://lateral.netmanagers.com.ar/stories/BBS52.html
 
 Scenario
 --------
@@ -29,10 +28,10 @@ Assumptions:
 Buildout
 --------
 
-Newest version: Interactive prompt is available
-===============================================
+Newest version of Fabric:
+=========================
 
-fabric.cfg or add to dev.cfg::
+Use this fabric.cfg or add to dev.cfg::
 
     [buildout]
     parts =
@@ -41,16 +40,25 @@ fabric.cfg or add to dev.cfg::
     [fabric]
     recipe= zc.recipe.egg
 
+Note:
+
+    * sudo apt-get install fabric also works, but you get an older version.
+    * Rather install via buildout
+    * Interactive prompt is available (Not so in older versions)
+
 Command-line usage
 ------------------
 
 ./bin/fab [commands]
 
-    * Paramiko for ssh
-    * Looks for fabfile.py
+    * Uses Paramiko python ssh library
+    * Looks for fabfile.py in the current directory
     * Normal python script with functions
-    * Each function maps to a command
-    * Commands can be chained (./bin/fab qa stop pull buildout start)
+    * Each public function maps to a command
+    * Commands can be chained:
+        * ./bin/fab qa restart
+        * ./bin/fab qa stop pull buildout start
+        * ./bin/fab qa pull restart production status
     * env dictionary (More about that in a minute)
 
 Command-line usage
@@ -269,3 +277,4 @@ Some future enhancements:
         * All are with cd (env.directory)
         * All are as the deploy user.
         * Single method that takes a list of command strings.
+        * (Already done)
