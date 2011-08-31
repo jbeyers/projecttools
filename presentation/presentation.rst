@@ -1,17 +1,15 @@
 Plone meeting 7 Aug 2011
-------------------------
+========================
 
 A quick rundown of Fabric, a python tool for simple deploys.
-============================================================
+------------------------------------------------------------
 
     * This is not pretty. So sue me.
     * All code: https://github.com/jbeyers/projecttools
         * This includes the presentation in rst format
-        * Generate pdf: rst2pdf presentation.rst -b1 -s presentation.style 
-        * See http://lateral.netmanagers.com.ar/stories/BBS52.html
 
 Scenario
---------
+========
 
 Assumptions:
 
@@ -26,10 +24,10 @@ Assumptions:
     * QA only started up as needed.
 
 Buildout
---------
+========
 
 Newest version of Fabric:
-=========================
+-------------------------
 
 Use this fabric.cfg or add to dev.cfg::
 
@@ -47,7 +45,7 @@ Note:
     * Interactive prompt is available (Not so in older versions)
 
 Command-line usage
-------------------
+==================
 
 ./bin/fab [commands]
 
@@ -62,7 +60,7 @@ Command-line usage
     * env dictionary (More about that in a minute)
 
 Command-line usage
-------------------
+==================
 
 ./bin/fab -l::
 
@@ -83,7 +81,7 @@ Command-line usage
 
 
 Command-line usage
-------------------
+==================
 
 ./bin/fab qa update::
 
@@ -112,7 +110,7 @@ Command-line usage
     Disconnecting from gogo.clouditto.com... done.
 
 Basic imports
--------------
+=============
 
 .. code-block:: python
 
@@ -129,14 +127,14 @@ Basic imports
         pass
 
 Note:
-=====
+-----
 
     * with cd, local, run, sudo
     * Try to import fab_config
     * fab_config.py used for site-specific settings in env
 
 Typical fab_config.py
----------------------
+=====================
 
 .. code-block:: python
 
@@ -152,7 +150,7 @@ Typical fab_config.py
         env.directory = '/home/%s/instances/qa.mysite' % env.deploy_user
 
 env dictionary
-==============
+--------------
 
     * Global
     * Like bash environment variables
@@ -160,7 +158,7 @@ env dictionary
     * hosts is special (but not for now)
 
 Stop and start
---------------
+==============
 
 .. code-block:: python
 
@@ -186,7 +184,7 @@ Note:
     * sudo either to root (no user specified) or the given user.
 
 Git pull and restart
---------------------
+====================
 
 .. code-block:: python
 
@@ -206,7 +204,7 @@ Git pull and restart
             sudo('./bin/instance restart', user=env.deploy_user)
 
 Git pull and restart combined
------------------------------
+=============================
 
 .. code-block:: python
 
@@ -218,7 +216,7 @@ Git pull and restart combined
         restart()
 
 Server health and status
-------------------------
+========================
 
 .. code-block:: python
 
@@ -239,7 +237,7 @@ Server health and status
             sudo('git log -1', user=env.deploy_user)
         
 The rest
----------
+========
 
 Do a buildout with correct config file:
 
@@ -265,7 +263,7 @@ Useful bit of scaffolding:
         pass
 
 Future
-------
+======
 
 Some future enhancements:
     * get and put files from/to the server. How about:
@@ -278,3 +276,10 @@ Some future enhancements:
         * All are as the deploy user.
         * Single method that takes a list of command strings.
         * (Already done)
+
+Links
+=====
+
+    * Fabric: http://fabfile.org
+    * code: https://github.com/jbeyers/projecttools
+    * rst2pdf for presentations: http://lateral.netmanagers.com.ar/stories/BBS52.html
