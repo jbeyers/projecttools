@@ -54,7 +54,10 @@ def status():
     run('df -h')
 
     # Deploy and running status
-    _with_deploy_env(['./bin/instance status', 'git status', 'git log -1'])
+    _with_deploy_env(['cat parts/instance/etc/zope.conf |grep address',
+                      './bin/instance status',
+                      'git status',
+                      'git log -1'])
     
 def update():
     """
