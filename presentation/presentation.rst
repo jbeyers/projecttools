@@ -1,5 +1,5 @@
-Plone meeting 7 Aug 2011
-========================
+Plone meeting 7 September 2011
+==============================
 
 A quick rundown of Fabric, a python tool for simple deploys.
 ------------------------------------------------------------
