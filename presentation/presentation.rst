@@ -31,6 +31,8 @@ Newest version of Fabric:
 
 Use this fabric.cfg or add to dev.cfg::
 
+    # fabric.cfg
+
     [buildout]
     parts =
         fabric
@@ -114,6 +116,8 @@ Basic imports
 
 .. code-block:: python
 
+    # fabfile.py
+
     """
     Fabric script for deploying Plone consistently.
     """
@@ -137,6 +141,8 @@ Typical fab_config.py
 =====================
 
 .. code-block:: python
+
+    # fab_config.py
 
     from fabric.api import env
 
