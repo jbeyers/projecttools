@@ -29,12 +29,12 @@ Buildout
 Newest version of Fabric:
 -------------------------
 
-Use this fabric.cfg or add to dev.cfg::
+Add to dev.cfg::
 
     # fabric.cfg
 
     [buildout]
-    parts =
+    parts +=
         fabric
 
     [fabric]
